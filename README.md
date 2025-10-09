@@ -20,3 +20,16 @@ Code ref comments
 (user) => user[filter].includes(value) is the condition function:
     user[filter] dynamically accesses a property of the user object. For example, if filter = 'username', then user[filter] is user.username.
     .includes(value) checks if the string in that property contains the substring value.
+
+
+
+
+#2
+const newUser = {id: mockusers[mockusers.length - 1].id + 1, ...body};
+
+mockusers is an array of user objects.
+mockusers[mockusers.length - 1] gets the last user in the array.
+.id + 1 increments that user's ID to create a new unique ID for the new user.
+(This assumes that mockusers is not empty and that IDs are numeric and sequential.)
+
+...body : This uses the spread operator to copy all properties from request.body into the new object.

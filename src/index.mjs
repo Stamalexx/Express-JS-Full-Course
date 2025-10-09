@@ -1,6 +1,9 @@
 import express, { response } from 'express';
 
 const app = express();
+app.use(express.json());
+
+
 const PORT = process.env.PORT || 3000; // if env port is undefined use 3000
 const mockusers = [
         {id: 1, username: "anson", displayName:"Anson"},
@@ -50,8 +53,38 @@ app.get('/api/products', (request,response) => {
 });
 
 
-// POST request
+// POST request 
+app.post('/api/users', (request, response) =>{
+    const { body } = request; //destructuring
+    const newUser = {id: mockusers[mockusers.length - 1].id + 1, ...body}; //ref 2
+    mockusers.push(newUser);
+    return response.status(201).send(newUser);
+});
 
+
+
+//PUT request - Replace the entire resource
+app.put("/api/users/:id", (request, response) => {
+        const { 
+                body, 
+                        params: { id},
+                        } = request;
+                        const parsedId = parseInt(id);
+                        if (isNaN(parsedId)) return response.sendStatus(400);
+
+                        const findUserIndex = mockusers.findIndex(
+                            (user) => user.id === parsedId
+                            );
+
+                            if (findUserIndex === -1) return response.sendStatus(404);
+
+                            mockusers[findUserIndex] = { id: parsedId, ...body};
+                            return response.sendStatus(200);
+
+                            });
+})
+
+// PATCH - updates a part 
 
 
 
