@@ -2,6 +2,7 @@
 Express JS Full Course from Youtube - https://www.youtube.com/watch?v=nH9E25nkk3I
 
 
+npm run start:dev -to start the project
 
 
 Thunder Client - postman like extension
@@ -33,3 +34,12 @@ mockusers[mockusers.length - 1] gets the last user in the array.
 (This assumes that mockusers is not empty and that IDs are numeric and sequential.)
 
 ...body : This uses the spread operator to copy all properties from request.body into the new object.
+
+
+#3
+
+mockusers[findUserIndex]: This accesses the user object at the index found earlier using findIndex.
+{ ...mockusers[findUserIndex], ...body }: This creates a new object by:
+
+Copying all properties from the existing user (...mockusers[findUserIndex])
+Overwriting or adding properties from the request body (...body)

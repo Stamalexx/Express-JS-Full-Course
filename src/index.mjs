@@ -3,6 +3,14 @@ import express, { response } from 'express';
 const app = express();
 app.use(express.json());
 
+// you can call a middleware: with this -> (request, response, next) => {} (see get())
+const loggingMiddleware = (request, response, next) => {
+    console.log(`${request.method} - ${request.url}`); //logs the request method and the url
+    next();
+};
+
+
+
 
 const PORT = process.env.PORT || 3000; // if env port is undefined use 3000
 const mockusers = [
@@ -10,7 +18,13 @@ const mockusers = [
         {id: 2, username: "manoulakios", displayName:"Manos"},
         {id: 3, username: "markos", displayName:"Mark"}
     ];
-app.get("/", (request, response ) => {
+
+app.get("/", 
+    (request, response, next) => {
+        console.log("Base URL");
+        next()
+
+    }, (request, response ) => {
     response.status(200).send({msg: "json msg Hello"});
 
 });
@@ -82,9 +96,47 @@ app.put("/api/users/:id", (request, response) => {
                             return response.sendStatus(200);
 
                             });
-})
 
 // PATCH - updates a part 
+
+app.patch("/api/users/:id", (request, response) => {
+        const { 
+                body, 
+                        params: { id},
+                        } = request;
+                        const parsedId = parseInt(id);
+                        if (isNaN(parsedId)) return response.sendStatus(400);
+
+                        const findUserIndex = mockusers.findIndex(
+                            (user) => user.id === parsedId
+                            );
+
+                            if (findUserIndex === -1) return response.sendStatus(404);
+
+                            mockusers[findUserIndex] = { ...mockusers[findUserIndex], ...body}; //ref3
+                            return response.sendStatus(200);
+
+                            });
+
+// DELETE
+
+app.delete("/api/users/:id", (request, response) => {
+    const { 
+        params: { id},
+                        } = request;
+                        
+                        const parsedId = parseInt(id);
+if (isNaN(parsedId)) return response.sendStatus(400);
+const findUserIndex = mockusers.findIndex(
+                            (user) => user.id === parsedId
+                            );
+
+                            if (findUserIndex === -1) return response.sendStatus(404);
+    mockusers.splice(findUserIndex, 1);
+    return response.sendStatus(200);                        
+
+
+});
 
 
 
