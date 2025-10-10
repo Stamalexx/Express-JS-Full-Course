@@ -9,7 +9,26 @@ const loggingMiddleware = (request, response, next) => {
     next();
 };
 
+// middleware 
+const resolveindexUserById = (request, response, next) => {
+    const {  
+                        params: { id},
+                        } = request;
+                        const parsedId = parseInt(id);
+                        if (isNaN(parsedId)) return response.sendStatus(400);
 
+                        const findUserIndex = mockusers.findIndex(
+                            (user) => user.id === parsedId
+                            );
+
+                            if (findUserIndex === -1) return response.sendStatus(404);
+
+                            request.findUserIndex = findUserIndex;
+                            next();
+                        };
+
+
+app.use(loggingMiddleware); //this will use the loggingmiddleware in the below calls - global middleware
 
 
 const PORT = process.env.PORT || 3000; // if env port is undefined use 3000
@@ -30,8 +49,6 @@ app.get("/",
 });
 
 app.get('/api/users', (request,response) => {
-    // const getquery = request.query; //gets { filter: 'username', value: 'an'} || /users?filter=username&value=an 
-
 
     const { 
         query: {filter, value},
@@ -46,18 +63,11 @@ app.get('/api/users', (request,response) => {
 
 
 });
-app.get('/api/users/:id', (request,response) => {
-    const paramsObj = request.params; // gives an object json type e.g {id: '1'}
-    const parsedId = parseInt(paramsObj.id);
-    if (isNaN(parsedId)){
-        return response.status(400).send({msg: 'Bad request'}); //error 400 bad request
-    };
-
-    const findUser = mockusers.find((user) => user.id === parsedId);
-
+app.get('/api/users/:id',resolveindexUserById, (request,response) => {
+    const {findUserIndex} = request;
+    const findUser = mockusers[findUserIndex];
    if (!findUser) {
     return response.sendStatus(404);}
-
    return response.send(findUser);
 });
 
@@ -78,41 +88,16 @@ app.post('/api/users', (request, response) =>{
 
 
 //PUT request - Replace the entire resource
-app.put("/api/users/:id", (request, response) => {
-        const { 
-                body, 
-                        params: { id},
-                        } = request;
-                        const parsedId = parseInt(id);
-                        if (isNaN(parsedId)) return response.sendStatus(400);
-
-                        const findUserIndex = mockusers.findIndex(
-                            (user) => user.id === parsedId
-                            );
-
-                            if (findUserIndex === -1) return response.sendStatus(404);
-
-                            mockusers[findUserIndex] = { id: parsedId, ...body};
+app.put("/api/users/:id",resolveindexUserById, (request, response) => {
+        const { body, findUserIndex } = request;
+                            mockusers[findUserIndex] = { id: mockusers[findUserIndex].id, ...body};
                             return response.sendStatus(200);
-
                             });
 
 // PATCH - updates a part 
 
-app.patch("/api/users/:id", (request, response) => {
-        const { 
-                body, 
-                        params: { id},
-                        } = request;
-                        const parsedId = parseInt(id);
-                        if (isNaN(parsedId)) return response.sendStatus(400);
-
-                        const findUserIndex = mockusers.findIndex(
-                            (user) => user.id === parsedId
-                            );
-
-                            if (findUserIndex === -1) return response.sendStatus(404);
-
+app.patch("/api/users/:id",resolveindexUserById, (request, response) => {
+        const {  body, findUserIndex } = request;
                             mockusers[findUserIndex] = { ...mockusers[findUserIndex], ...body}; //ref3
                             return response.sendStatus(200);
 
@@ -120,22 +105,10 @@ app.patch("/api/users/:id", (request, response) => {
 
 // DELETE
 
-app.delete("/api/users/:id", (request, response) => {
-    const { 
-        params: { id},
-                        } = request;
-                        
-                        const parsedId = parseInt(id);
-if (isNaN(parsedId)) return response.sendStatus(400);
-const findUserIndex = mockusers.findIndex(
-                            (user) => user.id === parsedId
-                            );
-
-                            if (findUserIndex === -1) return response.sendStatus(404);
+app.delete("/api/users/:id",resolveindexUserById, (request, response) => {
+    const { findUserIndex } = request;                  
     mockusers.splice(findUserIndex, 1);
     return response.sendStatus(200);                        
-
-
 });
 
 

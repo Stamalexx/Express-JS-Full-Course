@@ -43,3 +43,23 @@ mockusers[findUserIndex]: This accesses the user object at the index found earli
 
 Copying all properties from the existing user (...mockusers[findUserIndex])
 Overwriting or adding properties from the request body (...body)
+
+
+
+
+
+
+## Moved code comments:
+    // const getquery = request.query; //gets { filter: 'username', value: 'an'} || /users?filter=username&value=an 
+
+const { 
+        query: {filter, value},
+    } = request; //de-structiruing equals to const filter = request.query.filter; const value = request.query.value;
+
+
+
+    const paramsObj = request.params; // gives an object json type e.g {id: '1'}
+    const parsedId = parseInt(paramsObj.id);
+    if (isNaN(parsedId)){
+        return response.status(400).send({msg: 'Bad request'}); //error 400 bad request
+    };
