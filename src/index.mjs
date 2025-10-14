@@ -1,5 +1,6 @@
 import express, { response } from 'express';
-
+import { query, validationResult, body, matchedData, checkSchema } from 'express-validator';
+import { createUserValidationSchema } from './utils/validationSchema.mjs';
 const app = express();
 app.use(express.json());
 
@@ -47,9 +48,17 @@ app.get("/",
     response.status(200).send({msg: "json msg Hello"});
 
 });
+// query calls filter gets validation e.g query('filter').smth.smth.smth | they dont reject the request | it is middle ware there fore it gives us an object in the request
+app.get('/api/users', query('filter')
+.isString()
+.notEmpty()
+.withMessage("must not be empty")
+.isLength({min: 3, max: 10})
+.withMessage("custom message"), 
+(request,response) => {
 
-app.get('/api/users', (request,response) => {
-
+    const result = validationResult(request);
+    console.log(result);
     const { 
         query: {filter, value},
     } = request; //de-structiruing equals to const filter = request.query.filter; const value = request.query.value;
@@ -77,10 +86,17 @@ app.get('/api/products', (request,response) => {
 });
 
 
-// POST request 
-app.post('/api/users', (request, response) =>{
-    const { body } = request; //destructuring
-    const newUser = {id: mockusers[mockusers.length - 1].id + 1, ...body}; //ref 2
+// POST request - body("target")
+app.post('/api/users', checkSchema(createUserValidationSchema),
+ (request, response) =>{
+    const result = validationResult(request);
+    console.log(result); // for test
+    if (!result.isEmpty()) //result.isEmpty() returns true if notempty
+        return response.status(400).send({errors: result.array()});
+    const data = matchedData(request); // const { body } = request; //destructuring
+     //testing-
+    
+    const newUser = {id: mockusers[mockusers.length - 1].id + 1, ...data}; //ref 2
     mockusers.push(newUser);
     return response.status(201).send(newUser);
 });
