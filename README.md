@@ -1,6 +1,7 @@
 # Express-JS-Full-Course
 Express JS Full Course from Youtube - https://www.youtube.com/watch?v=nH9E25nkk3I
 
+npm run setup
 
 npm run start:dev -to start the project
 
