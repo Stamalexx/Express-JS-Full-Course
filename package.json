@@ -5,7 +5,7 @@
   "main": "index.mjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "setup": "npm i cookie-parser && npm i express-validator npm install express pg && npm install -D nodemon",
+    "setup": "npm i passport && npm i express-session && npm i cookie-parser && npm i express-validator npm i express pg && npm i -D nodemon",
     "start:dev": "nodemon ./src/index.mjs",
     "start": "node ./src/index.mjs"
   },
@@ -15,9 +15,11 @@
   "dependencies": {
     "cookie-parser": "^1.4.7",
     "express": "^5.1.0",
+    "express-session": "^1.18.2",
     "express-validator": "^7.2.1",
     "install": "^0.13.0",
     "npm": "^11.6.2",
+    "passport": "^0.7.0",
     "pg": "^8.16.3"
   },
   "devDependencies": {
